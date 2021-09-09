@@ -1,0 +1,42 @@
+version: '2'
+services:
+  nginx_server:
+    container_name: nginx_server
+    build: 
+      context: .
+      dockerfile: nginx/Dockerfile
+    working_dir: /var/www
+    ports: 
+      - "80:80"
+    volumes:
+      - ./www:/var/www
+    links:
+      - laravel_api
+    depends_on:
+      - laravel_api
+
+  laravel_api:
+    container_name: laravel_api
+    build: 
+      context: .
+      dockerfile: php/Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./www/claro-admin-db:/var/www
+    depends_on:
+      - database
+
+  database:
+    container_name: mysql_database
+    image: mysql:8.0.26
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+volumes:
+  dbdata:
