@@ -10,19 +10,20 @@ use App\Models\User;
 use App\Http\Requests\EnpointPostRequest;
 use App\Http\Requests\EnpointPutRequest;
 use App\Http\Requests\EnpointAddUserRequest;
+use Illuminate\Http\Request;
 
 class EndPointController extends Controller
 {
     use ApiResponse;
 
-    public function index()
+    public function index(Request $request)
     {
         try {
             if (!Auth::user()->can('endpoint.list')) {
                 return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED,'');
             }
 
-            $endpoints = EndPoint::all();
+            $endpoints = EndPoint::paginate($request->input('item_per_page'));
             return $this->successResponse('endpoint list', $endpoints);
         } catch (\Throwable $error) {
             return $this->errorResponse($error->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR,'');

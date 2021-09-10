@@ -33,12 +33,15 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/user/profile', [UserController::class, 'index']);
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/user/profile', [UserController::class, 'profile']);
     Route::put('/user/profile', [UserController::class, 'update']);
     Route::get('/user/roles', [UserController::class, 'assignedRoles']);
+
     Route::post('/user/{user_id}/rol/{rol_id}/add', [UserController::class, 'rolAdd']);
     Route::delete('/user/{user_id}/rol/{rol_id}/delete', [UserController::class, 'rolDelete']);
 
+    Route::get('/user/my/endpoints', [UserController::class, 'myEndpoints']);
     Route::get('/user/endpoints', [UserController::class, 'assignedEndpoints']);
     Route::get('/user/without/endpoints', [UserController::class, 'withoutEndpoints']);
 
@@ -54,10 +57,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/endpoints/{id}/users', [EndPointController::class, 'usersAssigned']);    
     Route::post('/endpoints/{id}/add-user', [EndPointController::class, 'addUser']);
     Route::delete('/endpoints/{endpoint_id}/delete-user/{user_id}', [EndPointController::class, 'removeUser']);
-    
-    Route::resource('/fruits', FruitController::class)->except(['show', 'create', 'edit']);
-    
-    Route::resource('/superheros', SuperherosController::class)->except(['show', 'create', 'edit']);
-
 });
+
+
+Route::resource('/fruits', FruitController::class)->except(['show', 'create', 'edit'])
+    ->middleware(['auth:sanctum', 'endpoint:fruits']);
+    
+Route::resource('/superheros', SuperherosController::class)->except(['show', 'create', 'edit'])
+    ->middleware(['auth:sanctum', 'endpoint:superheros']);
+
 

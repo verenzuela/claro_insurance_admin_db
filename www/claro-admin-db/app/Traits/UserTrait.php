@@ -9,6 +9,13 @@ trait UserTrait {
         return $this->roles()->get();
     }
 
+
+    public function cachedEndpoints(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->endpoints()->get();
+    }
+
+
     public function hasPermission($permission): bool
     {
         foreach ($this->roles as $role) {
@@ -47,7 +54,6 @@ trait UserTrait {
     }
 
 
-
     public function can($permission, $requireAll = false)
     {
         if (is_array($permission)) {
@@ -75,5 +81,30 @@ trait UserTrait {
         return false;
     }
 
+
+    public function canEndPoint($endpoint, $requireAll = false)
+    {
+        if (is_array($endpoint)) {
+            foreach ($endpoint as $endpointName) {
+                $hasPerm = $this->canEndPoint($endpointName);
+
+                if ($hasPerm && !$requireAll) {
+                    return true;
+                } elseif (!$hasPerm && $requireAll) {
+                    return false;
+                }
+            }
+
+            return $requireAll;
+        } else {
+            foreach ($this->cachedEndpoints() as $endpoint) {
+                if (Str::is( $endpoint, $endpoint->name) ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 }

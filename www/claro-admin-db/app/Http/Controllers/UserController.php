@@ -11,12 +11,31 @@ use App\Models\Role;
 use App\Models\ViewUsersEndpoint;
 use App\Models\ViewUsersWithoutEndpoint;
 use App\Http\Requests\UserProfileUpdateRequest;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     use ApiResponse;
 
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            if (!Auth::user()->hasRole('admin')) {
+                return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED);
+            }
+
+            $user = User::paginate($request->input('item_per_page'));
+            $user->load('roles');
+            $user->load('endpoints');
+
+            return $this->successResponse('User list.', $user);
+
+        } catch (\Throwable $error) {
+            return $this->errorResponse($error->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function profile(): \Illuminate\Http\JsonResponse
     {
         try {
             if (!Auth::user()->can('user.list')) {
@@ -104,6 +123,24 @@ class UserController extends Controller
             $user->load('roles');
 
             return $this->successResponse('User profile.',$user);
+
+        } catch (\Throwable $error) {
+            return $this->errorResponse($error->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    
+    public function myEndpoints(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            if (!Auth::user()->can('user.list')) {
+                return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED);
+            }
+
+            $user = User::findOrFail(Auth::user()->id);
+            $user->load('endpoints');
+
+            return $this->successResponse('User endpoints.',$user);
 
         } catch (\Throwable $error) {
             return $this->errorResponse($error->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

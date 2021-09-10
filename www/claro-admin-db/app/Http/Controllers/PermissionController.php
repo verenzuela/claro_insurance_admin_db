@@ -18,14 +18,14 @@ class PermissionController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
             if (!Auth::user()->can('permission.list')) {
                 return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED,'');
             }
 
-            $permissions = Permission::all();
+            $permissions = Permission::paginate($request->input('item_per_page'));
             return $this->successResponse('roles list', $permissions);
         } catch (\Throwable $error) {
             return $this->errorResponse($error->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR,'');

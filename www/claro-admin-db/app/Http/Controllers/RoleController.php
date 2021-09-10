@@ -10,6 +10,7 @@ use App\Models\Role;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
@@ -18,14 +19,15 @@ class RoleController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
             if (!Auth::user()->can('role.list')) {
                 return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED,'');
             }
 
-            $roles = Role::all();
+            $roles = Role::paginate($request->input('item_per_page'));
+            
             return $this->successResponse('roles list', $roles);
 
         } catch (\Throwable $error) {
