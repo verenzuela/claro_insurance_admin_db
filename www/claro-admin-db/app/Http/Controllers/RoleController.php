@@ -87,7 +87,7 @@ class RoleController extends Controller
     public function destroy($id): \Illuminate\Http\JsonResponse
     {
         try {
-            if (!Auth::user()->can('role.edit')) {
+            if (!Auth::user()->can('role.delete')) {
                 return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED,'');
             }
 
@@ -132,7 +132,7 @@ class RoleController extends Controller
     public function addPermission(RoleAddPermissionRequest $request, $id): \Illuminate\Http\JsonResponse
     {
         try {
-            if (!Auth::user()->can('role.list')) {
+            if (!Auth::user()->can('role.edit')) {
                 return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED,'');
             }
 
@@ -159,7 +159,7 @@ class RoleController extends Controller
     public function removePermission($role_id, $permission_id): \Illuminate\Http\JsonResponse
     {
         try {
-            if (!Auth::user()->can('role.list')) {
+            if (!Auth::user()->can('role.delete')) {
                 return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED,'');
             }
 

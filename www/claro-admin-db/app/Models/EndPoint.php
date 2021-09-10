@@ -10,6 +10,7 @@ class EndPoint extends Model
     use HasFactory;
 
     protected $table = 'end_points';
+    protected $guarded = [];
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {

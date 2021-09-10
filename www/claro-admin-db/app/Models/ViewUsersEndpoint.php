@@ -5,10 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Fruit extends Model
+class ViewUsersEndpoint extends Model
 {
     use HasFactory;
-
-    protected $table = 'fruits';
-    protected $guarded = [];
+    
+    public $table = "users_endpoint";
 }

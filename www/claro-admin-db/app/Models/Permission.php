@@ -10,6 +10,7 @@ class Permission extends Model
     use HasFactory;
 
     protected $table = 'permissions';
+    protected $guarded = [];
 
     public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {

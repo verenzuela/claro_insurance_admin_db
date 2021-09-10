@@ -10,4 +10,5 @@ class EndPointUser extends Model
     use HasFactory;
 
     protected $table = 'end_point_user';
+    protected $guarded = [];
 }

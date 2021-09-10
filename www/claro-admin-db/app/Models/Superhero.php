@@ -10,4 +10,5 @@ class Superhero extends Model
     use HasFactory;
 
     protected $table = 'superheros';
+    protected $guarded = [];
 }
